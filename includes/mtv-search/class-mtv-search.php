@@ -119,3 +119,54 @@ class MTV_SEARCH
 
 
 new MTV_SEARCH();
+
+
+
+add_shortcode('mtv_search', function ($atts) {
+
+ $variables = shortcode_atts(array(
+  'id' => '', /* phone or email */
+  'results_id' => 3035,
+  'method' => 'get',
+  'clean_view' => '0',
+  'action' => '',
+  'results' => 0,
+  'placeholder' => __('Search', 'motivar'),
+  'filter_icon' => 3043,
+  'search_icon' => 3095,
+  'filters' => 'taxonomy:category=55,56,43,53,49,51,46,119,102,103,104,120'
+ ), $atts);
+ $action = '';
+ if ($variables['id'] != '') {
+  $variables['action'] = get_permalink(mtv_get_translation($variables['id']));
+  $variables['method'] = 'post';
+ }
+ $variables['main-class'] = $variables['results'] == 1 ? 'show-filter' : '';
+ global $search_parameters;
+ $search_parameters = $variables;
+ return crf_template_part(crf_path . 'guest/search/body.php');
+});
+
+
+
+if (!function_exists('crf_template_part')) {
+ /**
+  * this function is used to get parts for the template of the project
+  * @param string $file the full file path to get
+  */
+ function crf_template_part($file)
+ {
+  ob_start();
+  include $file;
+  $content = ob_get_clean();
+  return apply_filters('crf_template_part', $content, $file);
+ }
+}
+
+
+
+add_action('wp_body_open', 'crf_add_hidden_divs');
+function crf_add_hidden_divs()
+{
+ echo crf_template_part(crf_template_path . '/inc/header/search-full-screen.php');
+}
