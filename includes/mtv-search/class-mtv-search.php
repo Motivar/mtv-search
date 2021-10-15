@@ -168,12 +168,12 @@ class MTV_SEARCH
    $args['tax_query'] = $tax_query;
   }
 
-  if (isset($search_params['year']) && !empty($search_params['year'])) {
+  if (isset($search_params['mtv_year']) && !empty($search_params['mtv_year'])) {
    $args['date_query'] = array(
     'relation' => 'OR',
    );
    $years = array();
-   foreach ($search_params['year'] as $year) {
+   foreach ($search_params['mtv_year'] as $year) {
     $args['date_query'][] = array('year' => $year);
     $years[] = $year;
    }

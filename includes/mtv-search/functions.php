@@ -30,17 +30,27 @@ if (!function_exists('mtv_admin_settings')) {
     'label' => __('Include scripts', 'mtv-search'),
     'explanation' => __('Leave empty ton include it everywhere', 'mtv-search')
    ),
+   'mtv_search_img_id' => array(
+    'case' => 'image',
+    'label' => __('Default featured image', 'mtv-search'),
+   ),
    'mtv_search_post_types' => array(
-    'label' => __('Post types', 'all-wp-meta'),
+    'label' => __('Post types to search in', 'all-wp-meta'),
     'case' => 'post_types',
     'attributes' => array('multiple' => true),
     'label_class' => array('awm-needed'),
    ),
    'mtv_search_taxonomies' => array(
-    'label' => __('Taxonomies', 'all-wp-meta'),
+    'label' => __('Taxonomies to filter', 'all-wp-meta'),
     'case' => 'taxonomies',
     'attributes' => array('multiple' => true),
     'label_class' => array('awm-needed'),
+   ),
+   'mtv_search_years' => array(
+    'label' => __('Years', 'all-wp-meta'),
+    'case' => 'input',
+    'type' => 'text',
+    'explanation' => __('Leave empty not to show date search. Use comma to separate years', 'mtv-search')
    ),
 
   ));
@@ -56,6 +66,7 @@ add_shortcode('mtv_search', function ($atts) {
   'post_types' => array(),
   'taxonomies' => array(),
   'action' => '',
+  'years' => array(),
   'results' => 0,
   'placeholder' => __('Search', 'motivar-search'),
   'filter_icon' => mtv_search_url . 'assets/img/filter.svg',
@@ -67,11 +78,14 @@ add_shortcode('mtv_search', function ($atts) {
  }
  $variables['main-class'] = $variables['results'] == 1 ? 'show-filter' : '';
 
- if (empty($post_types)) {
+ if (empty($variables['post_types'])) {
   $variables['post_types'] = get_option('mtv_search_post_types') ?: array();
  }
- if (empty($post_types)) {
+ if (empty($variables['taxonomies'])) {
   $variables['taxonomies'] = get_option('mtv_search_taxonomies') ?: array();
+ }
+ if (empty($variables['years'])) {
+  $variables['years'] = get_option('mtv_search_years') ?: array();
  }
 
 
@@ -125,8 +139,6 @@ if (!function_exists('mtv_seach_limit_text')) {
  function mtv_seach_limit_text($text, $limit = 10, $strip = false)
  {
   if ($limit != 0) {
-
-
    if ($strip) {
     $text = strip_tags($text, '<br>');
     $text = strip_shortcodes($text);
@@ -191,6 +203,19 @@ if (!function_exists('mtv_search_prepare_filters')) {
      'attributes' => array('value' => array($option)),
     );
    }
+  }
+  if (!empty($parameters['years'])) {
+   $years = explode(',', $parameters['years']);
+   $labels = array();
+   foreach ($years as $year) {
+    $labels[$year] = array('label' => $year);
+   }
+   $arrs['mtv_year'] = array(
+    'label' => __('Year', 'motivar'),
+    'case' => 'checkbox_multiple',
+    'options' => $labels,
+    'attributes' => array('exclude_meta' => true),
+   );
   }
   return $arrs;
  }

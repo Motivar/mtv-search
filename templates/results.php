@@ -3,6 +3,7 @@ if (!defined('ABSPATH')) exit;
 global $search_parameters;
 global $search_results;
 global $search_title;
+global $search_default_img;
 
 ?>
 <div class="results-title"><?php echo $search_title; ?></div>
@@ -17,6 +18,7 @@ if (empty($search_results)) {
 <?php
   return;
 }
+$search_default_img = get_option('mtv_search_img_id') ?: '';
 ?>
 <div class="results-wrapper">
   <?php
