@@ -24,12 +24,12 @@ if (empty($search_results)) {
   foreach ($search_results as $post) {
     global $result_post;
     $result_post = $post;
-    echo crf_template_part(crf_path . 'guest/search/result.php');
+    echo mtv_search_template_part('result.php');
   }
   ?>
 </div>
 <?php
 
 if ($search_action && $_REQUEST['searchpage'] != 1) {
-  echo crf_template_part(crf_path . 'guest/search/more_results.php');
+  echo mtv_search_template_part('more_results.php');
 }

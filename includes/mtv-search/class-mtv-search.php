@@ -7,16 +7,77 @@ class MTV_SEARCH
 {
  public function __construct()
  {
-
+  require_once 'functions.php';
   add_action('rest_api_init', array($this, 'mtv_rest_endpoints'));
   add_action('wp_footer', array($this, 'loading_effect'));
+  add_action('wp_body_open', array($this, 'crf_add_hidden_divs'), 100);
+  add_filter('awm_add_options_boxes_filter', array($this, 'mtv_settings'), 100);
+
+  add_action('init', array($this, 'registerScripts'), 10);
+  add_action('wp_enqueue_scripts', array($this, 'addScripts'), 10);
  }
+
+ /**
+  * register styles and script for tippy
+  */
+ public function registerScripts()
+ {
+
+  wp_register_script('mtv-search-script', mtv_search_url . 'assets/js/mtv_search.js', array(), false, 1);
+  wp_register_style('mtv-search-style', mtv_search_url . 'assets/css/full-screen.min.css', false, '1.0.0');
+ }
+
+ /**
+  * add scripts to run for admin and frontened
+  */
+ public function addScripts()
+ {
+  $pages = array();
+  $all = false;
+  $include = get_option('mtv_search_include_script') ?: '';/* pages to include script */
+  if (empty($include)) {
+   $all = true;
+  }
+  if (!empty($include)) {
+   $pages = explode(',', $include);
+  }
+  $pages[] = get_option('mtv_search_search_results_page') ?: ''; /*search result page*/
+  foreach ($pages as $page) {
+   $tran_id = mtv_search_get_translation($page);
+   if ($tran_id != $page) {
+    $pages[] = $tran_id;
+   }
+  }
+  if ($all || in_array(get_the_ID(), $pages)) {
+   wp_enqueue_style('mtv-search-style');
+   wp_enqueue_script('mtv-search-script');
+  }
+ }
+
+
+
+ public function crf_add_hidden_divs()
+ {
+  echo mtv_search_template_part('search-full-screen.php');
+ }
+
+
+ public function mtv_settings($options)
+ {
+  $options['mtv_search_settings'] = array(
+   'title' => __('Mtv Search Settings', 'mtv-search'),
+   'callback' => 'mtv_admin_settings',
+  );
+  return $options;
+ }
+
+
  /**
   * 
   */
  public function loading_effect()
  {
-  echo crf_template_part(crf_path . 'guest/search/loading.php');
+  echo mtv_search_template_part('loading.php');
  }
  /**
   * register rest endpoints
@@ -33,19 +94,24 @@ class MTV_SEARCH
  /**
   * make the query and gather the results
   */
- public function mtv_search_results()
+ public function mtv_search_results($request)
  {
   $response = '';
-  if (empty($_REQUEST)) {
+  if (empty($request)) {
+   return;
+  }
+  $params = $request->get_params();
+  if (empty($params)) {
+   return;
   }
   global $search_results;
   global $search_action;
+  global $search_params;
+  $search_params = $params;
   $search_action = true;
   $search_results = $this->construct_post_query();
-  $response = crf_template_part(crf_path . 'guest/search/results.php');
-
-
-  return new WP_REST_Response($response);
+  $response = mtv_search_template_part('results.php');
+  return rest_ensure_response(new WP_REST_Response($response), 200);
  }
  /**
   * construct the query based on the request
@@ -53,19 +119,20 @@ class MTV_SEARCH
 
  public function construct_post_query()
  {
+  global $search_params;
   $title = array();
   $tax_query = $meta_query = array();
   $args = array(
    'post_status' => 'publish',
    'suppress_filters' => false,
-   'post_type' => array('service', 'post', 'member', 'project'),
-   'numberposts' => $_REQUEST['numberposts'],
+   'post_type' => explode(',', $search_params['post_types']),
+   'numberposts' => $search_params['numberposts'],
    'orderby' => 'date',
    'order' => 'DESC'
   );
   if (isset($_REQUEST['searchtext'])) {
-   $args['s'] = crf_slug(sanitize_text_field($_REQUEST['searchtext']), false, true);
-   $title[] = sprintf(__('Results for %s', 'mtv-search'), '<span class="searched">"' . sanitize_text_field($_REQUEST['searchtext']) . '"</span>');
+   $args['s'] = sanitize_text_field($search_params['searchtext']);
+   $title[] = sprintf(__('Results for %s', 'mtv-search'), '<span class="searched">"' . sanitize_text_field($search_params['searchtext']) . '"</span>');
   }
 
   if (isset($_REQUEST['taxonomies'])) {
@@ -119,54 +186,3 @@ class MTV_SEARCH
 
 
 new MTV_SEARCH();
-
-
-
-add_shortcode('mtv_search', function ($atts) {
-
- $variables = shortcode_atts(array(
-  'id' => '', /* phone or email */
-  'results_id' => 3035,
-  'method' => 'get',
-  'clean_view' => '0',
-  'action' => '',
-  'results' => 0,
-  'placeholder' => __('Search', 'motivar'),
-  'filter_icon' => 3043,
-  'search_icon' => 3095,
-  'filters' => 'taxonomy:category=55,56,43,53,49,51,46,119,102,103,104,120'
- ), $atts);
- $action = '';
- if ($variables['id'] != '') {
-  $variables['action'] = get_permalink(mtv_get_translation($variables['id']));
-  $variables['method'] = 'post';
- }
- $variables['main-class'] = $variables['results'] == 1 ? 'show-filter' : '';
- global $search_parameters;
- $search_parameters = $variables;
- return crf_template_part(crf_path . 'guest/search/body.php');
-});
-
-
-
-if (!function_exists('crf_template_part')) {
- /**
-  * this function is used to get parts for the template of the project
-  * @param string $file the full file path to get
-  */
- function crf_template_part($file)
- {
-  ob_start();
-  include $file;
-  $content = ob_get_clean();
-  return apply_filters('crf_template_part', $content, $file);
- }
-}
-
-
-
-add_action('wp_body_open', 'crf_add_hidden_divs');
-function crf_add_hidden_divs()
-{
- echo crf_template_part(crf_template_path . '/inc/header/search-full-screen.php');
-}
