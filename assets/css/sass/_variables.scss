@@ -1,9 +1,16 @@
 $blue: #002642;
 $red: #840032;
-$black: black;
 $yellow: #E59500;
 $white: white;
 $grey: #F2F4F5;
+:root {
+    --mtv-search-main-color: #{$blue};
+    --mtv-search-secondary-color:#{$red};
+    --mtv-search-third-color:#{$yellow};
+    --mtv-search-fourth-color:#{$white};
+    --mtv-search-fifth-color:#{$grey};
+}
+
 $bp-larger-than-mobile: "min-width: 400px" !default;
 $bp-larger-than-phablet: "min-width: 550px" !default;
 $bp-smaller-than-phablet: "max-width: 550px" !default;
