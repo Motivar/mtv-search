@@ -51,8 +51,6 @@ if (!function_exists('mtv_admin_settings')) {
 add_shortcode('mtv_search', function ($atts) {
 
  $variables = shortcode_atts(array(
-  'id' => '', /* phone or email */
-  'results_id' => '',
   'method' => 'get',
   'clean_view' => '0',
   'post_types' => array(),
@@ -63,9 +61,8 @@ add_shortcode('mtv_search', function ($atts) {
   'filter_icon' => mtv_search_url . 'assets/img/filter.svg',
   'search_icon' => mtv_search_url . 'assets/img/search.svg',
  ), $atts);
- $action = '';
- if ($variables['id'] != '') {
-  $variables['action'] = get_permalink(mtv_search_get_translation($variables['id']));
+ if ($variables['results'] != 1) {
+  $variables['action'] = get_permalink(mtv_search_get_translation(get_option('mtv_search_search_results_page')));
   $variables['method'] = 'post';
  }
  $variables['main-class'] = $variables['results'] == 1 ? 'show-filter' : '';
@@ -191,8 +188,7 @@ if (!function_exists('mtv_search_prepare_filters')) {
      'taxonomy' => $taxonomy,
      'args' => array('hide_empty' => true),
      'view' => 'checkbox_multiple',
-     'attributes' => array('exclude_meta' => true, 'value' => array($option)),
-
+     'attributes' => array('value' => array($option)),
     );
    }
   }

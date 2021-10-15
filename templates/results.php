@@ -3,7 +3,6 @@ if (!defined('ABSPATH')) exit;
 global $search_parameters;
 global $search_results;
 global $search_title;
-global $search_action;
 
 ?>
 <div class="results-title"><?php echo $search_title; ?></div>
@@ -30,6 +29,6 @@ if (empty($search_results)) {
 </div>
 <?php
 
-if ($search_action && $_REQUEST['searchpage'] != 1) {
+if (!empty($search_action['action'])) {
   echo mtv_search_template_part('more_results.php');
 }

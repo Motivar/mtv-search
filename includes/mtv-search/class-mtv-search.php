@@ -130,28 +130,29 @@ class MTV_SEARCH
    'orderby' => 'date',
    'order' => 'DESC'
   );
-  if (isset($_REQUEST['searchtext'])) {
+  if (isset($search_params['searchtext'])) {
    $args['s'] = sanitize_text_field($search_params['searchtext']);
    $title[] = sprintf(__('Results for %s', 'mtv-search'), '<span class="searched">"' . sanitize_text_field($search_params['searchtext']) . '"</span>');
   }
 
-  if (isset($_REQUEST['taxonomies'])) {
-   $taxonomies = explode(',', $_REQUEST['taxonomies']);
-   foreach ($taxonomies as $key) {
 
-    if (isset($_REQUEST[$key]) && !empty($_REQUEST[$key])) {
+
+  if (isset($search_params['awm_custom_meta'])) {
+   $taxonomies = $search_params['awm_custom_meta'];
+   foreach ($taxonomies as $key) {
+    if (isset($search_params[$key]) && !empty($search_params[$key])) {
      $tax_query[] =
       array(
        'taxonomy' => $key,
-       'terms' => $_REQUEST[$key],
+       'terms' => $search_params[$key],
        'field' => 'id',
        'operator' => 'IN',
       );
      $termTitle = array();
-     if (isset($_REQUEST['searchtext'])) {
+     if (isset($search_params['searchtext'])) {
       $title[] = __('at', 'mtv-search');
      }
-     foreach ($_REQUEST[$key] as $term) {
+     foreach ($search_params[$key] as $term) {
       $termData = get_term($term, $key);
 
       if ($termData) {
@@ -167,12 +168,12 @@ class MTV_SEARCH
    $args['tax_query'] = $tax_query;
   }
 
-  if (isset($_REQUEST['year']) && !empty($_REQUEST['year'])) {
+  if (isset($search_params['year']) && !empty($search_params['year'])) {
    $args['date_query'] = array(
     'relation' => 'OR',
    );
    $years = array();
-   foreach ($_REQUEST['year'] as $year) {
+   foreach ($search_params['year'] as $year) {
     $args['date_query'][] = array('year' => $year);
     $years[] = $year;
    }

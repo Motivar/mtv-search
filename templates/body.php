@@ -2,8 +2,7 @@
 if (!defined('ABSPATH')) exit;
 global $search_parameters;
 global $search_archive_option;
-$search_action = $search_parameters['results'] == 1 ? get_permalink(mtv_search_get_translation($search_parameters['results_id'])) : $search_parameters['action'];
-$searchtext = isset($_REQUEST['searchtext']) ? sanitize_text_field($_REQUEST['searchtext']) : '';
+$searchtext = isset($search_params['searchtext']) ? sanitize_text_field($search_params['searchtext']) : '';
 $autotrigger = $searchtext != '' ? 1 : 0;
 $number = $autotrigger == 1 ? -1 : 15;
 if ($search_parameters['clean_view'] == 1) {
@@ -18,14 +17,14 @@ $search_parameters['filters'] = mtv_search_prepare_filters($search_parameters, $
 
 ?>
 <div id="search_form" data-trigger="<?php echo $autotrigger; ?>">
-  <form id="mtv-form" method="get" action="<?php echo $search_action ?>">
+  <form id="mtv-form" method="get" action="<?php echo $search_parameters['action'] ?>">
 
     <div class="search-bar <?php echo $search_parameters['main-class']; ?>">
       <div class="inputs"><input type="hidden" name="searchpage" value="<?php echo $autotrigger; ?>" /><input type="text" placeholder="<?php echo $search_parameters['placeholder']; ?>" id="searchtext" name="searchtext" class="highlight" value="<?php echo $searchtext; ?>" required="true"><?php echo awm_show_content($hidden_inputs); ?></div>
       <div class="search-icon"><span id="search-trigger" onclick="mtv_search();"><?php echo file_get_contents($search_parameters['search_icon']); ?></span></div>
 
       <?php
-      if ($search_parameters['results'] == 1 && !empty($search_parameters['filters'])) {
+      if (!empty($search_parameters['filters'])) {
       ?>
         <div class="search-icon"><span id="filter-trigger" onclick="changeSearchContainer(this);"><?php echo file_get_contents($search_parameters['filter_icon']); ?></span></div>
       <?
@@ -37,7 +36,7 @@ $search_parameters['filters'] = mtv_search_prepare_filters($search_parameters, $
     <?php
     if ($search_parameters['results'] == 1) {
 
-      if (!isset($_REQUEST['searchtext'])) {
+      if (!isset($search_params['searchtext'])) {
         global $search_results;
         global $search_title;
         global $search_action;
