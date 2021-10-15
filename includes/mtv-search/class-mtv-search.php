@@ -72,6 +72,7 @@ class MTV_SEARCH
   $options['mtv_search_settings'] = array(
    'title' => __('Mtv Search Settings', 'mtv-search'),
    'callback' => 'mtv_admin_settings',
+   'explanation' => __('Here you configure all the settings regarding the search functionallity. It is <b>important</b> to create a page with the shortocode [mtv_search results="1"] and declare it below.')
   );
   return $options;
  }
