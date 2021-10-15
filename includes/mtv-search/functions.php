@@ -28,7 +28,7 @@ if (!function_exists('mtv_admin_settings')) {
     'case' => 'input',
     'type' => 'text',
     'label' => __('Include scripts', 'mtv-search'),
-    'explanation' => __('Leave empty to include it everywhere', 'mtv-search')
+    'explanation' => __('Leave empty to include it everywhere, otherwise write the ids of the page, seperated by comma', 'mtv-search')
    ),
    'mtv_search_img_id' => array(
     'case' => 'image',
