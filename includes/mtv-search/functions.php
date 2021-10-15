@@ -28,7 +28,7 @@ if (!function_exists('mtv_admin_settings')) {
     'case' => 'input',
     'type' => 'text',
     'label' => __('Include scripts', 'mtv-search'),
-    'explanation' => __('Leave empty ton include it everywhere', 'mtv-search')
+    'explanation' => __('Leave empty to include it everywhere', 'mtv-search')
    ),
    'mtv_search_img_id' => array(
     'case' => 'image',
@@ -70,14 +70,16 @@ add_shortcode('mtv_search', function ($atts) {
   'results' => 0,
   'placeholder' => __('Search', 'motivar-search'),
   'filter_icon' => mtv_search_url . 'assets/img/filter.svg',
+  'close_icon' => mtv_search_url . 'assets/img/close.svg',
   'search_icon' => mtv_search_url . 'assets/img/search.svg',
  ), $atts);
  if ($variables['results'] != 1) {
   $variables['action'] = get_permalink(mtv_search_get_translation(get_option('mtv_search_search_results_page')));
   $variables['method'] = 'post';
  }
- $variables['main-class'] = $variables['results'] == 1 ? 'show-filter' : '';
-
+ $variables['main-class'] = array();
+ $variables['main-class'][] = $variables['results'] == 1 ? 'show-filter' : '';
+ $variables['main-class'][] = $variables['clean_view'] == 1 ? 'show-close' : '';
  if (empty($variables['post_types'])) {
   $variables['post_types'] = get_option('mtv_search_post_types') ?: array();
  }

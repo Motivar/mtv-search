@@ -9,28 +9,12 @@ class MTV_SEARCH
  {
   require_once 'functions.php';
   add_action('rest_api_init', array($this, 'mtv_rest_endpoints'));
-  add_action('wp_footer', array($this, 'loading_effect'));
-  add_action('wp_body_open', array($this, 'crf_add_hidden_divs'), 100);
   add_filter('awm_add_options_boxes_filter', array($this, 'mtv_settings'), 100);
-
   add_action('init', array($this, 'registerScripts'), 10);
-  add_action('wp_enqueue_scripts', array($this, 'addScripts'), 10);
+  add_action('wp', array($this, 'check_page'));
  }
 
- /**
-  * register styles and script for tippy
-  */
- public function registerScripts()
- {
-
-  wp_register_script('mtv-search-script', mtv_search_url . 'assets/js/mtv_search.js', array(), false, 1);
-  wp_register_style('mtv-search-style', mtv_search_url . 'assets/css/full-screen.min.css', false, '1.0.0');
- }
-
- /**
-  * add scripts to run for admin and frontened
-  */
- public function addScripts()
+ public function check_page()
  {
   $pages = array();
   $all = false;
@@ -49,14 +33,35 @@ class MTV_SEARCH
    }
   }
   if ($all || in_array(get_the_ID(), $pages)) {
-   wp_enqueue_style('mtv-search-style');
-   wp_enqueue_script('mtv-search-script');
+   add_action('wp_enqueue_scripts', array($this, 'addScripts'), 100);
+   add_action('wp_footer', array($this, 'loading_effect'));
+   add_action('wp_body_open', array($this, 'mtv_add_hidden_divs'), 100);
   }
+ }
+
+ /**
+  * register styles and script for tippy
+  */
+ public function registerScripts()
+ {
+
+  wp_register_script('mtv-search-script', mtv_search_url . 'assets/js/mtv_search.js', array(), false, 1);
+  wp_register_style('mtv-search-style', mtv_search_url . 'assets/css/full-screen.min.css', false, '1.0.0');
+ }
+
+ /**
+  * add scripts to run for admin and frontened
+  */
+ public function addScripts()
+ {
+  wp_enqueue_style('mtv-search-style');
+  wp_localize_script('mtv-search-script', 'mtv_search_vars', apply_filters('mtv_search_vars_filter', array('trigger' => get_option('mtv_search_trigger_element'))));
+  wp_enqueue_script('mtv-search-script');
  }
 
 
 
- public function crf_add_hidden_divs()
+ public function mtv_add_hidden_divs()
  {
   echo mtv_search_template_part('search-full-screen.php');
  }

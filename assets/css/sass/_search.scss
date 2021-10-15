@@ -112,8 +112,14 @@
                  }
              }
          }
+         &.show-close {
+             grid-template-columns: 7fr 1fr 1fr;
+         }
          &.show-filter {
              grid-template-columns: 7fr 1fr 1fr;
+             &.show-close {
+                 grid-template-columns: 6fr 1fr 1fr 1fr;
+             }
              .inputs {
                  border: none !important;
              }
@@ -390,27 +396,6 @@
              color: white;
              border-color: $yellow !important;
              background-color: $yellow !important;
-         }
-     }
- }
- 
- .home {
-     .search-bar:not(.show-filter) {
-         .search-icon {
-             #search-trigger {
-                 background: $red;
-                 border-radius: 50px;
-                 width: 100%;
-                 margin: 0 auto;
-                 @media (#{$bp-smaller-than-tablet}) {
-                     margin-top: 20px;
-                 }
-                 svg {
-                     path {
-                         stroke: $white !important;
-                     }
-                 }
-             }
          }
      }
  }

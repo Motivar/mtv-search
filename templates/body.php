@@ -19,7 +19,7 @@ $search_parameters['filters'] = mtv_search_prepare_filters($search_parameters, $
 <div id="search_form" data-trigger="<?php echo $autotrigger; ?>">
   <form id="mtv-form" method="get" action="<?php echo $search_parameters['action'] ?>">
 
-    <div class="search-bar <?php echo $search_parameters['main-class']; ?>">
+    <div class="search-bar <?php echo implode(' ', $search_parameters['main-class']); ?>">
       <div class="inputs"><input type="hidden" name="searchpage" value="<?php echo $autotrigger; ?>" /><input type="text" placeholder="<?php echo $search_parameters['placeholder']; ?>" id="searchtext" name="searchtext" class="highlight" value="<?php echo $searchtext; ?>" required="true"><?php echo awm_show_content($hidden_inputs); ?></div>
       <div class="search-icon"><span id="search-trigger" onclick="mtv_search();"><?php echo file_get_contents($search_parameters['search_icon']); ?></span></div>
 
@@ -28,6 +28,12 @@ $search_parameters['filters'] = mtv_search_prepare_filters($search_parameters, $
       ?>
         <div class="search-icon"><span id="filter-trigger" onclick="changeSearchContainer(this);"><?php echo file_get_contents($search_parameters['filter_icon']); ?></span></div>
       <?
+      }
+      if ($search_parameters['clean_view'] == 1) {
+
+      ?>
+        <div class="search-icon"><span id="close-trigger" onclick="mtv_close_search();"><?php echo file_get_contents($search_parameters['close_icon']); ?></span></div>
+      <?php
       }
       ?>
     </div>
