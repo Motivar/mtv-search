@@ -51,7 +51,7 @@ body.full-screen-open {
         position: relative;
     }
     .full-screen-open & {
-        z-index: 99;
+        z-index: 9999999999;
     }
     &.left {
         left: -100%;
