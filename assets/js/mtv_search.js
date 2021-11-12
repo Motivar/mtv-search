@@ -6,7 +6,6 @@ jQuery(document).ready(function() {
     jQuery(document).on('click', '#more-results-button', function() {
         jQuery('#search-full-screen form#mtv-form #submit').trigger('click');
     });
-    console.log(mtv_search_vars);
     if (mtv_search_vars.trigger !== '') {
         jQuery(document).on('click', mtv_search_vars.trigger, function() {
             jQuery('body').toggleClass('full-screen-open');
