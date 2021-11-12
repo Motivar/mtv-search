@@ -55,8 +55,9 @@ $search_parameters['filters'] = mtv_search_prepare_filters($search_parameters, $
           'orderby' => 'date',
           'order' => 'desc'
         );
-        if (is_archive()) {
+        if (is_tax('category')) {
           $obj = get_queried_object();
+
           $search_archive_option = $obj->term_id;
           $search_title = $obj->name;
           $args['tax_query'] = array(
