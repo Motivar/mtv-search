@@ -56,7 +56,6 @@ function changeSearchContainer(wrap) {
     if (!fullScreen) {
         container = '#page';
     }
-    console.log(container);
     jQuery(container + ' #' + id).toggleClass('active');
     switch (id) {
         case 'filter-trigger':
