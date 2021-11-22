@@ -63,6 +63,11 @@ if (!function_exists('mtv_admin_settings')) {
     'attributes' => array('multiple' => true),
     'label_class' => array('awm-needed'),
    ),
+   'mtv_exclude_taxonomies' => array(
+    'label' => __('Taxonomies to exlude (ids)', 'all-wp-meta'),
+    'case' => 'input',
+    'type' => 'text',
+   ),
    'mtv_search_years' => array(
     'label' => __('Years', 'all-wp-meta'),
     'case' => 'input',
@@ -101,6 +106,7 @@ add_shortcode('mtv_search', function ($atts) {
  if (empty($variables['taxonomies'])) {
   $variables['taxonomies'] = get_option('mtv_search_taxonomies') ?: array();
  }
+ $variables['exclude_ids'] = get_option('mtv_exclude_taxonomies') ?: array();
  if (empty($variables['years'])) {
   $variables['years'] = get_option('mtv_search_years') ?: array();
  }
@@ -208,14 +214,19 @@ if (!function_exists('mtv_search_prepare_filters')) {
  function mtv_search_prepare_filters($parameters, $option)
  {
   $arrs = array();
+  $exclude_ids = array();
   if (isset($parameters['taxonomies']) && !empty($parameters['taxonomies'])) {
+   if (!empty($parameters['exclude_ids'])) {
+    $exclude_ids = explode(',', $parameters['exclude_ids']);
+   }
+
    foreach ($parameters['taxonomies'] as $taxonomy) {
     $tax = get_taxonomy($taxonomy);
     $arrs[$taxonomy] = array(
      'label' => $tax->label,
      'case' => 'term',
      'taxonomy' => $taxonomy,
-     'args' => array('hide_empty' => true),
+     'args' => array('hide_empty' => true, 'exclude' => $exclude_ids),
      'view' => 'checkbox_multiple',
      'attributes' => array('value' => array($option)),
     );
