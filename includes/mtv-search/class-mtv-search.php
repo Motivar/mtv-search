@@ -12,7 +12,20 @@ class MTV_SEARCH
   add_filter('awm_add_options_boxes_filter', array($this, 'mtv_settings'), 100);
   add_action('init', array($this, 'registerScripts'), 10);
   add_action('wp', array($this, 'check_page'));
+  add_filter('body_class', array($this, 'mtv_search_page_class'));
  }
+
+ public function mtv_search_page_class($classes)
+ {
+  if (in_array(get_the_ID(), mtv_search_pages())) {
+   $classes[] = 'mtv-search-page-results';
+  }
+  return $classes;
+ }
+
+
+
+
 
  public function check_page()
  {
