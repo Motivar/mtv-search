@@ -1,38 +1,37 @@
 <?php
 if (!defined('ABSPATH')) exit;
-global $search_parameters;
-global $search_archive_option;
-$searchtext = isset($search_params['searchtext']) ? sanitize_text_field($search_params['searchtext']) : '';
+global $mtv_search_parameters;
+global $mtv_search_archive_option;
+$searchtext = isset($_REQUEST['searchtext']) ? sanitize_text_field($_REQUEST['searchtext']) : '';
 $autotrigger = $searchtext != '' ? 1 : 0;
 $number = $autotrigger == 1 ? -1 : 15;
-if ($search_parameters['clean_view'] == 1) {
-  $autotrigger = 0;
+if ($mtv_search_parameters['clean_view'] == 1) {
   $number = 15;
   $searchtext = '';
 }
-$search_parameters['number'] = $number;
-$hidden_inputs = mtv_search_hidden_inputs($search_parameters);
-$search_parameters['filters'] = mtv_search_prepare_filters($search_parameters, $search_archive_option);
+$mtv_search_parameters['number'] = $number;
+$hidden_inputs = mtv_search_hidden_inputs($mtv_search_parameters);
+$mtv_search_parameters['filters'] = mtv_search_prepare_filters($mtv_search_parameters, $mtv_search_archive_option);
 
 
 ?>
 <div id="search_form" data-trigger="<?php echo $autotrigger; ?>">
-  <form id="mtv-form" method="get" action="<?php echo $search_parameters['action'] ?>">
+  <form id="mtv-search-form" method="get" action="<?php echo $mtv_search_parameters['action'] ?>">
 
-    <div class="search-bar <?php echo implode(' ', $search_parameters['main-class']); ?>">
-      <div class="inputs"><input type="hidden" name="searchpage" value="<?php echo $autotrigger; ?>" /><input type="text" placeholder="<?php echo $search_parameters['placeholder']; ?>" id="searchtext" name="searchtext" class="highlight" value="<?php echo $searchtext; ?>" required="true"><?php echo awm_show_content($hidden_inputs); ?></div>
-      <div class="search-icon"><span id="search-trigger" onclick="mtv_search();"><?php echo @file_get_contents($search_parameters['search_icon']) ?: '<img src="' . $search_parameters['search_icon'] . '"/>'; ?></span></div>
+    <div class="search-bar <?php echo implode(' ', $mtv_search_parameters['main-class']); ?>">
+      <div class="inputs"><input type="hidden" name="searchpage" value="<?php echo get_the_ID(); ?>" /><input type="text" placeholder="<?php echo $mtv_search_parameters['placeholder']; ?>" id="searchtext" name="searchtext" class="highlight" value="<?php echo $searchtext; ?>" required="true"><?php echo awm_show_content($hidden_inputs); ?></div>
+      <div class="search-icon"><span id="search-trigger" onclick="mtv_search();"><?php echo @file_get_contents($mtv_search_parameters['search_icon']) ?: '<img src="' . $mtv_search_parameters['search_icon'] . '"/>'; ?></span></div>
 
       <?php
-      if (!empty($search_parameters['filters'])) {
+      if (!empty($mtv_search_parameters['filters'])) {
       ?>
-        <div class="search-icon"><span id="filter-trigger" onclick="changeSearchContainer(this);"><?php echo @file_get_contents($search_parameters['filter_icon']) ?: '<img src="' . $search_parameters['filter_icon'] . '"/>'; ?></span></div>
+        <div class="search-icon"><span id="filter-trigger" onclick="changeSearchContainer(this);"><?php echo @file_get_contents($mtv_search_parameters['filter_icon']) ?: '<img src="' . $mtv_search_parameters['filter_icon'] . '"/>'; ?></span></div>
       <?
       }
-      if ($search_parameters['clean_view'] == 1) {
+      if ($mtv_search_parameters['clean_view'] == 1) {
 
       ?>
-        <div class="search-icon"><span id="close-trigger" onclick="mtv_close_search();"><?php echo @file_get_contents($search_parameters['close_icon']) ?: '<img src="' . $search_parameters['close_icon'] . '"/>'; ?></span></div>
+        <div class="search-icon"><span id="close-trigger" onclick="mtv_close_search();"><?php echo @file_get_contents($mtv_search_parameters['close_icon']) ?: '<img src="' . $mtv_search_parameters['close_icon'] . '"/>'; ?></span></div>
       <?php
       }
       ?>
@@ -40,25 +39,25 @@ $search_parameters['filters'] = mtv_search_prepare_filters($search_parameters, $
 
 
     <?php
-    if ($search_parameters['results'] == 1) {
+    if ($mtv_search_parameters['results'] == 1) {
 
-      if (!isset($search_params['searchtext'])) {
-        global $search_results;
+      if (!isset($_REQUEST['searchtext'])) {
+        global $mtv_search_results;
         global $search_title;
-        global $search_action;
-        $search_action = false;
+        global $mtv_search_action;
+        $mtv_search_action = false;
         $search_title = __('Most popular articles', 'mtv-search');
         $args = array(
           'post_type' => 'post',
           'post_status' => 'publish',
           'suppress_filters' => false,
           'orderby' => 'date',
-          'order' => 'desc'
+          'order' => 'asc'
         );
         if (is_tax('category')) {
           $obj = get_queried_object();
 
-          $search_archive_option = $obj->term_id;
+          $mtv_search_archive_option = $obj->term_id;
           $search_title = $obj->name;
           $args['tax_query'] = array(
             array(
@@ -69,7 +68,7 @@ $search_parameters['filters'] = mtv_search_prepare_filters($search_parameters, $
             )
           );
         }
-        $search_results = get_posts($args);
+        $mtv_search_results = get_posts($args);
       }
 
 
@@ -80,7 +79,7 @@ $search_parameters['filters'] = mtv_search_prepare_filters($search_parameters, $
             <?php echo mtv_search_template_part('results.php'); ?>
           </div>
         </div>
-        <?php if (!empty($search_parameters['filters'])) {
+        <?php if (!empty($mtv_search_parameters['filters'])) {
         ?>
           <div id="search_form_filter">
             <?php echo mtv_search_template_part('filters.php'); ?>

@@ -1,11 +1,11 @@
 <?php
 if (!defined('ABSPATH')) exit;
-global $search_parameters;
+global $mtv_search_parameters;
 
 
 ?>
 <div class="filters">
-        <?php echo awm_show_content($search_parameters['filters']); ?>
+        <?php echo awm_show_content($mtv_search_parameters['filters']); ?>
 </div>
 <div class="filters-actions">
         <div class="undo">

@@ -25,12 +25,9 @@ class MTV_SEARCH
   if (!empty($include)) {
    $pages = explode(',', $include);
   }
-  $pages[] = get_option('mtv_search_search_results_page') ?: ''; /*search result page*/
-  foreach ($pages as $page) {
-   $tran_id = mtv_search_get_translation($page);
-   if ($tran_id != $page) {
-    $pages[] = $tran_id;
-   }
+  $extra_pages = mtv_search_pages();
+  foreach ($extra_pages as $page) {
+   $pages[] = $page;
   }
   if ($all || in_array(get_the_ID(), $pages)) {
    add_action('wp_enqueue_scripts', array($this, 'addScripts'), 100);
@@ -63,6 +60,11 @@ class MTV_SEARCH
 
  public function mtv_add_hidden_divs()
  {
+  global $post;
+  $pages = mtv_search_pages();
+  if (in_array($post->ID, $pages)) {
+   return;
+  }
   echo mtv_search_template_part('search-full-screen.php');
  }
 
@@ -110,12 +112,13 @@ class MTV_SEARCH
   if (empty($params)) {
    return;
   }
-  global $search_results;
-  global $search_action;
-  global $search_params;
-  $search_params = $params;
-  $search_action = true;
-  $search_results = $this->construct_post_query();
+  global $mtv_search_results;
+  global $mtv_search_action;
+  global $mtv_search_params;
+
+  $mtv_search_params = $params;
+  $mtv_search_action = true;
+  $mtv_search_results = $this->construct_post_query();
   $response = mtv_search_template_part('results.php');
   return rest_ensure_response(new WP_REST_Response($response), 200);
  }
@@ -125,40 +128,40 @@ class MTV_SEARCH
 
  public function construct_post_query()
  {
-  global $search_params;
+  global $mtv_search_params;
   $title = array();
   $tax_query = $meta_query = array();
   $args = array(
    'post_status' => 'publish',
    'suppress_filters' => false,
-   'post_type' => explode(',', $search_params['post_types']),
-   'numberposts' => $search_params['numberposts'],
+   'post_type' => explode(',', $mtv_search_params['post_types']),
+   'numberposts' => $mtv_search_params['numberposts'],
    'orderby' => 'date',
    'order' => 'DESC'
   );
-  if (isset($search_params['searchtext'])) {
-   $args['s'] = sanitize_text_field($search_params['searchtext']);
-   $title[] = sprintf(__('Results for %s', 'mtv-search'), '<span class="searched">"' . sanitize_text_field($search_params['searchtext']) . '"</span>');
+  if (isset($mtv_search_params['searchtext'])) {
+   $args['s'] = sanitize_text_field($mtv_search_params['searchtext']);
+   $title[] = sprintf(__('Results for %s', 'mtv-search'), '<span class="searched">"' . sanitize_text_field($mtv_search_params['searchtext']) . '"</span>');
   }
 
 
 
-  if (isset($search_params['awm_custom_meta'])) {
-   $taxonomies = $search_params['awm_custom_meta'];
+  if (isset($mtv_search_params['awm_custom_meta'])) {
+   $taxonomies = $mtv_search_params['awm_custom_meta'];
    foreach ($taxonomies as $key) {
-    if (isset($search_params[$key]) && !empty($search_params[$key])) {
+    if (isset($mtv_search_params[$key]) && !empty($mtv_search_params[$key])) {
      $tax_query[] =
       array(
        'taxonomy' => $key,
-       'terms' => $search_params[$key],
+       'terms' => $mtv_search_params[$key],
        'field' => 'id',
        'operator' => 'IN',
       );
      $termTitle = array();
-     if (isset($search_params['searchtext'])) {
+     if (isset($mtv_search_params['searchtext'])) {
       $title[] = __('at', 'mtv-search');
      }
-     foreach ($search_params[$key] as $term) {
+     foreach ($mtv_search_params[$key] as $term) {
       $termData = get_term($term, $key);
 
       if ($termData) {
@@ -174,12 +177,12 @@ class MTV_SEARCH
    $args['tax_query'] = $tax_query;
   }
 
-  if (isset($search_params['mtv_year']) && !empty($search_params['mtv_year'])) {
+  if (isset($mtv_search_params['mtv_year']) && !empty($mtv_search_params['mtv_year'])) {
    $args['date_query'] = array(
     'relation' => 'OR',
    );
    $years = array();
-   foreach ($search_params['mtv_year'] as $year) {
+   foreach ($mtv_search_params['mtv_year'] as $year) {
     $args['date_query'][] = array('year' => $year);
     $years[] = $year;
    }

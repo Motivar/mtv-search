@@ -4,7 +4,7 @@ jQuery(document).ready(function() {
     mtv_auto_trigger();
 
     jQuery(document).on('click', '#more-results-button', function() {
-        jQuery('#search-full-screen form#mtv-form #submit').trigger('click');
+        jQuery('#search-full-screen form#mtv-search-form #submit').trigger('click');
     });
     if (mtv_search_vars.trigger !== '') {
         jQuery(document).on('click', mtv_search_vars.trigger, function() {
@@ -67,7 +67,7 @@ function changeSearchContainer(wrap) {
 }
 
 function mtv_auto_trigger() {
-    if (jQuery('#page-main-content #search_form').attr('data-trigger') == 1) {
+    if (jQuery('#page #search_form').attr('data-trigger') == 1) {
         mtv_search();
     }
 }
@@ -97,7 +97,7 @@ function mtv_search_query(container) {
             type: "GET",
             async: true,
             cache: false,
-            data: jQuery(container + ' #mtv-form').serializeArray(),
+            data: jQuery(container + ' #mtv-search-form').serializeArray(),
             url: awmGlobals.url + "/wp-json/mtv-search/search/",
             success: function(response) {
                 mtv_loading(loading, false);
@@ -125,7 +125,7 @@ function disableCheckboxes() {
     if (!fullScreen) {
         container = '#page-main-content';
     }
-    jQuery(container + ' #mtv-form input[type="checkbox"]').prop("checked", false);
+    jQuery(container + ' #mtv-search-form input[type="checkbox"]').prop("checked", false);
     changeSearchContainer(jQuery(container + ' #filter-trigger'));
     mtv_search();
 }

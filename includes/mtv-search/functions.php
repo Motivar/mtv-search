@@ -3,6 +3,23 @@ if (!defined('ABSPATH')) {
  exit;
 }
 
+if (!function_exists('mtv_search_pages')) {
+ function mtv_search_pages()
+ {
+  $pages = (array)get_option('mtv_search_search_results_page') ?: array(); /*search result page*/
+  if (!empty($pages)) {
+   foreach ($pages as $page) {
+    $tran_id = mtv_search_get_translation($page);
+    if ($tran_id != $page) {
+     $pages[] = $tran_id;
+    }
+   }
+  }
+  return $pages;
+ }
+}
+
+
 
 if (!function_exists('mtv_admin_settings')) {
  /**
@@ -73,10 +90,8 @@ add_shortcode('mtv_search', function ($atts) {
   'close_icon' => mtv_search_url . 'assets/img/close.svg',
   'search_icon' => mtv_search_url . 'assets/img/search.svg',
  ), $atts);
- if ($variables['results'] != 1) {
-  $variables['action'] = get_permalink(mtv_search_get_translation(get_option('mtv_search_search_results_page')));
-  $variables['method'] = 'post';
- }
+ $variables['action'] = get_permalink(mtv_search_get_translation(get_option('mtv_search_search_results_page')));
+ $variables['method'] = 'post';
  $variables['main-class'] = array();
  $variables['main-class'][] = $variables['results'] == 1 ? 'show-filter' : '';
  $variables['main-class'][] = $variables['clean_view'] == 1 ? 'show-close' : '';
@@ -91,8 +106,8 @@ add_shortcode('mtv_search', function ($atts) {
  }
 
 
- global $search_parameters;
- $search_parameters = $variables;
+ global $mtv_search_parameters;
+ $mtv_search_parameters = $variables;
  return mtv_search_template_part('body.php');
 });
 
