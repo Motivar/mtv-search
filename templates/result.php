@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) exit;
 global $result_post;
 global $search_default_img;
 $permalink = get_permalink($result_post->ID);
-$featured_img_url = get_the_post_thumbnail_url($result_post->ID, 'full');
+$featured_img_url = get_the_post_thumbnail_url($result_post->ID, 'medium');
 if (empty($featured_img_url) && $search_default_img) {
  $featured_img_url = wp_get_attachment_image_url($search_default_img);
 }
