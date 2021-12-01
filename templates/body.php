@@ -20,18 +20,18 @@ $mtv_search_parameters['filters'] = mtv_search_prepare_filters($mtv_search_param
 
     <div class="search-bar <?php echo implode(' ', $mtv_search_parameters['main-class']); ?>">
       <div class="inputs"><input type="hidden" name="searchpage" value="<?php echo get_the_ID(); ?>" /><input type="text" placeholder="<?php echo $mtv_search_parameters['placeholder']; ?>" id="searchtext" name="searchtext" class="highlight" value="<?php echo $searchtext; ?>" required="true"><?php echo awm_show_content($hidden_inputs); ?></div>
-      <div class="search-icon"><span id="search-trigger" onclick="mtv_search();"><?php echo @file_get_contents($mtv_search_parameters['search_icon']) ?: '<img src="' . $mtv_search_parameters['search_icon'] . '"/>'; ?></span></div>
+      <div class="search-icon"><span id="search-trigger" onclick="mtv_search();"><?php echo '<img src="' . $mtv_search_parameters['search_icon'] . '"/>'; ?></span></div>
 
       <?php
       if (!empty($mtv_search_parameters['filters'])) {
       ?>
-        <div class="search-icon"><span id="filter-trigger" onclick="changeSearchContainer(this);"><?php echo @file_get_contents($mtv_search_parameters['filter_icon']) ?: '<img src="' . $mtv_search_parameters['filter_icon'] . '"/>'; ?></span></div>
+        <div class="search-icon"><span id="filter-trigger" onclick="changeSearchContainer(this);"><?php echo '<img src="' . $mtv_search_parameters['filter_icon'] . '"/>'; ?></span></div>
       <?
       }
       if ($mtv_search_parameters['clean_view'] == 1) {
 
       ?>
-        <div class="search-icon"><span id="close-trigger" onclick="mtv_close_search();"><?php echo @file_get_contents($mtv_search_parameters['close_icon']) ?: '<img src="' . $mtv_search_parameters['close_icon'] . '"/>'; ?></span></div>
+        <div class="search-icon"><span id="close-trigger" onclick="mtv_close_search();"><?php echo '<img src="' . $mtv_search_parameters['close_icon'] . '"/>'; ?></span></div>
       <?php
       }
       ?>
