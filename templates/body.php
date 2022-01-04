@@ -47,12 +47,14 @@ $mtv_search_parameters['filters'] = mtv_search_prepare_filters($mtv_search_param
         global $mtv_search_action;
         $mtv_search_action = false;
         $search_title = __('Most popular articles', 'mtv-search');
+        $default_order = get_option('mtv_default_order') ?: 'publish_date';
+        $default_order_type = get_option('mtv_default_order_type') ?: 'ASC';
         $args = array(
           'post_type' => 'post',
           'post_status' => 'publish',
           'suppress_filters' => false,
-          'orderby' => 'date',
-          'order' => 'asc'
+          'orderby' => $default_order,
+          'order' => $default_order_type
         );
         if (is_tax('category')) {
           $obj = get_queried_object();

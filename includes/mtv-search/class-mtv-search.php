@@ -144,13 +144,15 @@ class MTV_SEARCH
   global $mtv_search_params;
   $title = array();
   $tax_query = $meta_query = array();
+  $default_order = get_option('mtv_default_order') ?: 'publish_date';
+  $default_order_type = get_option('mtv_default_order_type') ?: 'DESC';
   $args = array(
    'post_status' => 'publish',
    'suppress_filters' => false,
    'post_type' => explode(',', $mtv_search_params['post_types']),
    'numberposts' => $mtv_search_params['numberposts'],
-   'orderby' => 'date',
-   'order' => 'DESC'
+   'orderby' => $default_order,
+   'order' => $default_order_type
   );
   if (isset($mtv_search_params['searchtext'])) {
    $args['s'] = sanitize_text_field($mtv_search_params['searchtext']);

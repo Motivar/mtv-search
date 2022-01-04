@@ -52,27 +52,47 @@ if (!function_exists('mtv_admin_settings')) {
     'label' => __('Default featured image', 'mtv-search'),
    ),
    'mtv_search_post_types' => array(
-    'label' => __('Post types to search in', 'all-wp-meta'),
+    'label' => __('Post types to search in', 'mtv-search'),
     'case' => 'post_types',
     'attributes' => array('multiple' => true),
     'label_class' => array('awm-needed'),
    ),
    'mtv_search_taxonomies' => array(
-    'label' => __('Taxonomies to filter', 'all-wp-meta'),
+    'label' => __('Taxonomies to filter', 'mtv-search'),
     'case' => 'taxonomies',
     'attributes' => array('multiple' => true),
     'label_class' => array('awm-needed'),
    ),
    'mtv_exclude_taxonomies' => array(
-    'label' => __('Taxonomies to exlude (ids)', 'all-wp-meta'),
+    'label' => __('Taxonomies to exlude (ids)', 'mtv-search'),
     'case' => 'input',
     'type' => 'text',
    ),
    'mtv_search_years' => array(
-    'label' => __('Years', 'all-wp-meta'),
+    'label' => __('Years', 'mtv-search'),
     'case' => 'input',
     'type' => 'text',
     'explanation' => __('Leave empty not to show date search. Use comma to separate years', 'mtv-search')
+   ),
+   'mtv_default_order' => array(
+    'label' => __('Default order', 'mtv-search'),
+    'case' => 'select',
+    'removeEmpty' => true,
+    'options' => array(
+     'publish_date' => array('label' => __('Publish date', 'mtv-search')),
+     'modified' => array('label' => __('Modified date', 'mtv-search')),
+     'title' => array('label' => __('Post title', 'mtv-search'))
+    ),
+   ),
+   'mtv_default_order_type' => array(
+    'label' => __('Default order type', 'mtv-search'),
+    'case' => 'select',
+    'removeEmpty' => true,
+    'options' => array(
+     'ASC' => array('label' => __('ASC', 'mtv-search')),
+     'DESC' => array('label' => __('DESC', 'mtv-search')),
+
+    ),
    ),
 
   ));
